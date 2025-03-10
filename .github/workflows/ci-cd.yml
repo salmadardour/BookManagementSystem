@@ -1,0 +1,67 @@
+name: Build, Test and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+      
+    - name: Test
+      run: dotnet test --no-build --configuration Release --verbosity normal
+
+    - name: Publish
+      run: dotnet publish --configuration Release --output ./publish
+      
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-build
+        path: ./publish
+
+  deploy-to-azure:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v3
+      with:
+        name: app-build
+        path: ./app-build
+        
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'book-management-api'
+        package: './app-build'
+        
+    - name: Azure CLI script - Set up environment variables
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az webapp config appsettings set --name book-management-api --resource-group book-management-rg --settings DATABASE_CONNECTION_STRING="${{ secrets.DATABASE_CONNECTION_STRING }}" JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}"

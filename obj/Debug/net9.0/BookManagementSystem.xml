@@ -1,0 +1,548 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BookManagementSystem</name>
+    </assembly>
+    <members>
+        <member name="T:BookManagementSystem.Controllers.AuthController">
+            <summary>
+            Manages user authentication operations including registration, login, token refresh, and logout
+            </summary>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.AuthController.#ctor(Microsoft.AspNetCore.Identity.UserManager{BookManagementSystem.Identity.ApplicationUser},Microsoft.AspNetCore.Identity.RoleManager{Microsoft.AspNetCore.Identity.IdentityRole},Microsoft.AspNetCore.Identity.SignInManager{BookManagementSystem.Identity.ApplicationUser},BookManagementSystem.Services.ITokenService)">
+            <summary>
+            Initializes a new instance of the AuthController
+            </summary>
+            <param name="userManager">Provides user management functionality</param>
+            <param name="roleManager">Provides role management functionality</param>
+            <param name="signInManager">Provides sign-in functionality</param>
+            <param name="tokenService">Provides JWT token generation functionality</param>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.AuthController.Register(BookManagementSystem.DTO.RegisterDTO)">
+            <summary>
+            Registers a new user
+            </summary>
+            <param name="registerDTO">User registration information</param>
+            <returns>JWT token and refresh token</returns>
+            <response code="200">Returns the new JWT token and refresh token</response>
+            <response code="400">If the registration information is invalid</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.AuthController.Login(BookManagementSystem.DTO.LoginDTO)">
+            <summary>
+            Authenticates a user and returns a JWT token
+            </summary>
+            <param name="loginDTO">User login credentials</param>
+            <returns>JWT token and refresh token</returns>
+            <response code="200">Returns the JWT token and refresh token</response>
+            <response code="401">If credentials are invalid</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.AuthController.Refresh(BookManagementSystem.DTO.RefreshTokenDTO)">
+            <summary>
+            Refreshes an expired JWT token using a refresh token
+            </summary>
+            <param name="refreshDTO">Refresh token information</param>
+            <returns>New JWT token and refresh token</returns>
+            <response code="200">Returns new JWT token and refresh token</response>
+            <response code="401">If refresh token is invalid or expired</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.AuthController.Logout">
+            <summary>
+            Logs out a user by invalidating their refresh token
+            </summary>
+            <returns>Logout confirmation</returns>
+            <response code="200">Returns success message</response>
+            <response code="401">If user is not authenticated</response>
+        </member>
+        <member name="T:BookManagementSystem.Controllers.AuthorController">
+            <summary>
+            Manages operations related to authors in the Book Management System
+            </summary>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.AuthorController.#ctor(BookManagementSystem.Data.BookManagementContext,Microsoft.Extensions.Logging.ILogger{BookManagementSystem.Controllers.AuthorController})">
+            <summary>
+            Initializes a new instance of the AuthorController
+            </summary>
+            <param name="context">Database context for author operations</param>
+            <param name="logger">Logger for the controller</param>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.AuthorController.GetAuthors">
+            <summary>
+            Gets all authors in the system
+            </summary>
+            <returns>A list of all authors</returns>
+            <response code="200">Returns the list of authors</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.AuthorController.GetAuthor(System.Int32)">
+            <summary>
+            Gets a specific author by ID
+            </summary>
+            <param name="id">The ID of the author to retrieve</param>
+            <returns>The requested author</returns>
+            <response code="200">Returns the requested author</response>
+            <response code="404">If the author is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.AuthorController.PutAuthor(System.Int32,BookManagementSystem.DTO.AuthorDTO)">
+            <summary>
+            Updates an existing author
+            </summary>
+            <param name="id">The ID of the author to update</param>
+            <param name="authorDTO">The updated author data</param>
+            <returns>No content if successful</returns>
+            <response code="204">If the author was updated successfully</response>
+            <response code="400">If the ID in the URL doesn't match the ID in the request body</response>
+            <response code="404">If the author is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.AuthorController.PostAuthor(BookManagementSystem.DTO.AuthorDTO)">
+            <summary>
+            Creates a new author
+            </summary>
+            <param name="authorDTO">The author data to create</param>
+            <returns>The newly created author</returns>
+            <response code="201">Returns the newly created author</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.AuthorController.DeleteAuthor(System.Int32)">
+            <summary>
+            Deletes a specific author
+            </summary>
+            <param name="id">The ID of the author to delete</param>
+            <returns>No content if successful</returns>
+            <response code="204">If the author was deleted successfully</response>
+            <response code="404">If the author is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="T:BookManagementSystem.Controllers.BooksController">
+            <summary>
+            Manages operations related to books in the Book Management System
+            </summary>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.BooksController.#ctor(BookManagementSystem.Data.BookManagementContext,Microsoft.Extensions.Logging.ILogger{BookManagementSystem.Controllers.BooksController})">
+            <summary>
+            Initializes a new instance of the BooksController
+            </summary>
+            <param name="context">Database context for book operations</param>
+            <param name="logger">Logger for the controller</param>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.BooksController.GetBooks">
+            <summary>
+            Gets all books with their associated author, category and publisher details
+            </summary>
+            <returns>A list of books with detailed information</returns>
+            <response code="200">Returns the list of books</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.BooksController.GetBook(System.Int32)">
+            <summary>
+            Gets a specific book by its ID with detailed information
+            </summary>
+            <param name="id">The ID of the book to retrieve</param>
+            <returns>The requested book with details</returns>
+            <response code="200">Returns the requested book</response>
+            <response code="404">If the book is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.BooksController.PutBook(System.Int32,BookManagementSystem.DTO.BookDTO)">
+            <summary>
+            Updates an existing book
+            </summary>
+            <param name="id">The ID of the book to update</param>
+            <param name="bookDTO">The updated book data</param>
+            <returns>No content if successful</returns>
+            <response code="204">If the book was updated successfully</response>
+            <response code="400">If the ID in the URL doesn't match the ID in the request body</response>
+            <response code="404">If the book is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.BooksController.PostBook(BookManagementSystem.DTO.BookDTO)">
+            <summary>
+            Creates a new book
+            </summary>
+            <param name="bookDTO">The book data to create</param>
+            <returns>The newly created book</returns>
+            <response code="201">Returns the newly created book</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.BooksController.DeleteBook(System.Int32)">
+            <summary>
+            Deletes a specific book
+            </summary>
+            <param name="id">The ID of the book to delete</param>
+            <returns>No content if successful</returns>
+            <response code="204">If the book was deleted successfully</response>
+            <response code="404">If the book is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="T:BookManagementSystem.Controllers.CategoryController">
+            <summary>
+            Manages operations related to book categories in the Book Management System
+            </summary>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.CategoryController.#ctor(BookManagementSystem.Data.BookManagementContext,Microsoft.Extensions.Logging.ILogger{BookManagementSystem.Controllers.CategoryController})">
+            <summary>
+            Initializes a new instance of the CategoryController
+            </summary>
+            <param name="context">Database context for category operations</param>
+            <param name="logger">Logger for the controller</param>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.CategoryController.GetCategories">
+            <summary>
+            Gets all book categories in the system
+            </summary>
+            <returns>A list of all categories</returns>
+            <response code="200">Returns the list of categories</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.CategoryController.GetCategory(System.Int32)">
+            <summary>
+            Gets a specific category by ID
+            </summary>
+            <param name="id">The ID of the category to retrieve</param>
+            <returns>The requested category</returns>
+            <response code="200">Returns the requested category</response>
+            <response code="404">If the category is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.CategoryController.PutCategory(System.Int32,BookManagementSystem.DTO.CategoryDTO)">
+            <summary>
+            Updates an existing category
+            </summary>
+            <param name="id">The ID of the category to update</param>
+            <param name="categoryDTO">The updated category data</param>
+            <returns>No content if successful</returns>
+            <response code="204">If the category was updated successfully</response>
+            <response code="400">If the ID in the URL doesn't match the ID in the request body</response>
+            <response code="404">If the category is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.CategoryController.PostCategory(BookManagementSystem.DTO.CategoryDTO)">
+            <summary>
+            Creates a new category
+            </summary>
+            <param name="categoryDTO">The category data to create</param>
+            <returns>The newly created category</returns>
+            <response code="201">Returns the newly created category</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.CategoryController.DeleteCategory(System.Int32)">
+            <summary>
+            Deletes a specific category
+            </summary>
+            <param name="id">The ID of the category to delete</param>
+            <returns>No content if successful</returns>
+            <response code="204">If the category was deleted successfully</response>
+            <response code="404">If the category is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="T:BookManagementSystem.Controllers.PublisherController">
+            <summary>
+            Manages operations related to publishers in the Book Management System
+            </summary>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.PublisherController.#ctor(BookManagementSystem.Data.BookManagementContext,Microsoft.Extensions.Logging.ILogger{BookManagementSystem.Controllers.PublisherController})">
+            <summary>
+            Initializes a new instance of the PublisherController
+            </summary>
+            <param name="context">Database context for publisher operations</param>
+            <param name="logger">Logger for the controller</param>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.PublisherController.GetPublishers">
+            <summary>
+            Gets all publishers in the system
+            </summary>
+            <returns>A list of all publishers</returns>
+            <response code="200">Returns the list of publishers</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.PublisherController.GetPublisher(System.Int32)">
+            <summary>
+            Gets a specific publisher by ID
+            </summary>
+            <param name="id">The ID of the publisher to retrieve</param>
+            <returns>The requested publisher</returns>
+            <response code="200">Returns the requested publisher</response>
+            <response code="404">If the publisher is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.PublisherController.PutPublisher(System.Int32,BookManagementSystem.DTO.PublisherDTO)">
+            <summary>
+            Updates an existing publisher
+            </summary>
+            <param name="id">The ID of the publisher to update</param>
+            <param name="publisherDTO">The updated publisher data</param>
+            <returns>No content if successful</returns>
+            <response code="204">If the publisher was updated successfully</response>
+            <response code="400">If the ID in the URL doesn't match the ID in the request body</response>
+            <response code="404">If the publisher is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.PublisherController.PostPublisher(BookManagementSystem.DTO.PublisherDTO)">
+            <summary>
+            Creates a new publisher
+            </summary>
+            <param name="publisherDTO">The publisher data to create</param>
+            <returns>The newly created publisher</returns>
+            <response code="201">Returns the newly created publisher</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.PublisherController.DeletePublisher(System.Int32)">
+            <summary>
+            Deletes a specific publisher
+            </summary>
+            <param name="id">The ID of the publisher to delete</param>
+            <returns>No content if successful</returns>
+            <response code="204">If the publisher was deleted successfully</response>
+            <response code="404">If the publisher is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="T:BookManagementSystem.Controllers.ReviewController">
+            <summary>
+            Manages operations related to book reviews in the Book Management System
+            </summary>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.ReviewController.#ctor(BookManagementSystem.Data.BookManagementContext,Microsoft.Extensions.Logging.ILogger{BookManagementSystem.Controllers.ReviewController})">
+            <summary>
+            Initializes a new instance of the ReviewController
+            </summary>
+            <param name="context">Database context for review operations</param>
+            <param name="logger">Logger for the controller</param>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.ReviewController.GetReviews">
+            <summary>
+            Gets all book reviews in the system
+            </summary>
+            <returns>A list of all reviews with book information</returns>
+            <response code="200">Returns the list of reviews</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.ReviewController.GetReview(System.Int32)">
+            <summary>
+            Gets a specific review by ID
+            </summary>
+            <param name="id">The ID of the review to retrieve</param>
+            <returns>The requested review with book information</returns>
+            <response code="200">Returns the requested review</response>
+            <response code="404">If the review is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.ReviewController.PutReview(System.Int32,BookManagementSystem.DTO.ReviewDTO)">
+            <summary>
+            Updates an existing review
+            </summary>
+            <param name="id">The ID of the review to update</param>
+            <param name="reviewDTO">The updated review data</param>
+            <returns>No content if successful</returns>
+            <response code="204">If the review was updated successfully</response>
+            <response code="400">If the ID in the URL doesn't match the ID in the request body</response>
+            <response code="404">If the review is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.ReviewController.PostReview(BookManagementSystem.DTO.ReviewDTO)">
+            <summary>
+            Creates a new review for a book
+            </summary>
+            <param name="reviewDTO">The review data to create</param>
+            <returns>The newly created review</returns>
+            <response code="201">Returns the newly created review</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="M:BookManagementSystem.Controllers.ReviewController.DeleteReview(System.Int32)">
+            <summary>
+            Deletes a specific review
+            </summary>
+            <param name="id">The ID of the review to delete</param>
+            <returns>No content if successful</returns>
+            <response code="204">If the review was deleted successfully</response>
+            <response code="404">If the review is not found</response>
+            <response code="500">If there was an internal server error</response>
+        </member>
+        <member name="T:BookManagementSystem.Migrations.InitialCreate">
+            <inheritdoc />
+        </member>
+        <member name="M:BookManagementSystem.Migrations.InitialCreate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:BookManagementSystem.Migrations.InitialCreate.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:BookManagementSystem.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:BookManagementSystem.Models.Author">
+            <summary>
+            Represents an author in the Book Management System
+            </summary>
+        </member>
+        <member name="P:BookManagementSystem.Models.Author.Id">
+            <summary>
+            Unique identifier for the author
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Author.Name">
+            <summary>
+            Name of the author
+            </summary>
+            <example>J.K. Rowling</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Author.Books">
+            <summary>
+            Collection of books written by this author
+            </summary>
+        </member>
+        <member name="T:BookManagementSystem.Models.Book">
+            <summary>
+            Represents a book in the Book Management System
+            </summary>
+        </member>
+        <member name="P:BookManagementSystem.Models.Book.Id">
+            <summary>
+            Unique identifier for the book
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Book.Title">
+            <summary>
+            Title of the book
+            </summary>
+            <example>Harry Potter and the Sorcerer's Stone</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Book.ISBN">
+            <summary>
+            International Standard Book Number (ISBN) of the book
+            </summary>
+            <example>123-456789</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Book.CategoryId">
+            <summary>
+            ID of the category the book belongs to
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Book.Category">
+            <summary>
+            Category the book belongs to
+            </summary>
+        </member>
+        <member name="P:BookManagementSystem.Models.Book.AuthorId">
+            <summary>
+            ID of the author of the book
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Book.Author">
+            <summary>
+            Author of the book
+            </summary>
+        </member>
+        <member name="P:BookManagementSystem.Models.Book.PublisherId">
+            <summary>
+            ID of the publisher of the book
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Book.Publisher">
+            <summary>
+            Publisher of the book
+            </summary>
+        </member>
+        <member name="T:BookManagementSystem.Models.Category">
+            <summary>
+            Represents a book category in the Book Management System
+            </summary>
+        </member>
+        <member name="P:BookManagementSystem.Models.Category.Id">
+            <summary>
+            Unique identifier for the category
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Category.Name">
+            <summary>
+            Name of the category
+            </summary>
+            <example>Fantasy</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Category.Books">
+            <summary>
+            Collection of books in this category
+            </summary>
+        </member>
+        <member name="T:BookManagementSystem.Models.Publisher">
+            <summary>
+            Represents a publisher in the Book Management System
+            </summary>
+        </member>
+        <member name="P:BookManagementSystem.Models.Publisher.Id">
+            <summary>
+            Unique identifier for the publisher
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Publisher.Name">
+            <summary>
+            Name of the publisher
+            </summary>
+            <example>Bloomsbury</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Publisher.Address">
+            <summary>
+            Address of the publisher's headquarters or main office
+            </summary>
+            <example>50 Bedford Square, London, WC1B 3DP, UK</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Publisher.ContactNumber">
+            <summary>
+            Contact number for the publisher
+            </summary>
+            <example>+44 20 7631 5600</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Publisher.Books">
+            <summary>
+            Collection of books published by this publisher
+            </summary>
+        </member>
+        <member name="T:BookManagementSystem.Models.Review">
+            <summary>
+            Represents a book review in the Book Management System
+            </summary>
+        </member>
+        <member name="P:BookManagementSystem.Models.Review.Id">
+            <summary>
+            Unique identifier for the review
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Review.ReviewerName">
+            <summary>
+            Name of the person who provided the review
+            </summary>
+            <example>John Doe</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Review.Content">
+            <summary>
+            Text content of the review
+            </summary>
+            <example>This book was a fantastic read with engaging characters and an exciting plot.</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Review.Rating">
+            <summary>
+            Rating given to the book (1-5 stars)
+            </summary>
+            <example>5</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Review.BookId">
+            <summary>
+            ID of the book being reviewed
+            </summary>
+            <example>1</example>
+        </member>
+        <member name="P:BookManagementSystem.Models.Review.Book">
+            <summary>
+            Book being reviewed
+            </summary>
+        </member>
+    </members>
+</doc>
